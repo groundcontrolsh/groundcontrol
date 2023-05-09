@@ -1,3 +1,5 @@
+![GroundControl](./images/hero.png)
+
 # GroundControl
 
 This is the repository for the TypeScript SDK for [GroundControl](https://groundcontrol.sh/). More SDKs will be available in the future.
