@@ -1,4 +1,4 @@
-![GroundControl](./images/hero.png)
+![GroundControl](https://github.com/groundcontrolsh/groundcontrol/raw/main/images/hero.png)
 
 # GroundControl
 
