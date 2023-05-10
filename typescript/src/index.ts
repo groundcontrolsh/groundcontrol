@@ -17,7 +17,9 @@ export class GroundControlClient {
   }
 
   async isFeatureFlagEnabled(flagName: string, ...actorIds: string[]) {
-    const query = actorIds.map((actorId) => `actorIds=${actorId}`).join("&");
+    const query = actorIds
+      .map((actorId) => `actorIds=${encodeURIComponent(actorId)}`)
+      .join("&");
     const path = `/projects/${
       this.#projectId
     }/flags/${flagName}/check?${query}`;
