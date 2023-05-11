@@ -16,8 +16,11 @@ export class GroundControlClient {
     this.#apiKey = options.apiKey;
   }
 
-  async isFeatureFlagEnabled(flagName: string, ...actorIds: string[]) {
-    const query = actorIds
+  async isFeatureFlagEnabled(
+    flagName: string,
+    options?: { actors?: string[] }
+  ) {
+    const query = (options?.actors || [])
       .map((actorId) => `actorIds=${encodeURIComponent(actorId)}`)
       .join("&");
     const path = `/projects/${

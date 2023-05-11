@@ -22,13 +22,16 @@ export const GroundControlProvider: React.FC<
   );
 };
 
-export function useFeatureFlag(flagName: string, ...actorIds: string[]) {
+export function useFeatureFlag(
+  flagName: string,
+  options?: { actors?: string[] }
+) {
   const ctx = useContext(GroundControlContext);
   if (!ctx) throw new Error("Missing GroundControlProvider");
 
   const { projectId, apiKey, baseUrl } = ctx;
   const [enabled, setEnabled] = useState(false);
-  const query = actorIds
+  const query = (options?.actors ?? [])
     .map((actorId) => `actorIds=${encodeURIComponent(actorId)}`)
     .join("&");
 
