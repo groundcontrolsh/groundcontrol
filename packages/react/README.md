@@ -35,7 +35,9 @@ function App() {
 // In your components
 function MyComponent() {
   const isEnabled = useFeatureFlag("flag-name");
-  const isEnabledForActor = useFeatureFlag("flag-name", "actor1234");
+  const isEnabledForActor = useFeatureFlag("flag-name", {
+    actors: ["actor1234"],
+  });
 
   // ...
 }

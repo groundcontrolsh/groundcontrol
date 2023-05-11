@@ -29,8 +29,7 @@ const client = new GroundControlClient({
 });
 
 const isEnabled = await client.isFeatureFlagEnabled("flag-name");
-const isEnabledForActor = await client.isFeatureFlagEnabled(
-  "flag-name",
-  "actor1234"
-);
+const isEnabledForActor = await client.isFeatureFlagEnabled("flag-name", {
+  actors: ["actor1234"],
+});
 ```
