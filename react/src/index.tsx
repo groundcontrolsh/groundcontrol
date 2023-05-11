@@ -36,7 +36,7 @@ export function useFeatureFlag(flagName: string, ...actorIds: string[]) {
       .join("&");
     const path = `/projects/${projectId}/flags/${flagName}/check?${query}`;
 
-    fetch(`${baseUrl}${path}`, {
+    fetch(`${baseUrl ?? "https://api.groundcontrol.sh"}${path}`, {
       method: "POST",
       headers: {
         authorization: `Bearer ${apiKey}`,

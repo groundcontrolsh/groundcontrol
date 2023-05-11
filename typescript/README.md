@@ -9,13 +9,13 @@ TypeScript SDK for [GroundControl](https://groundcontrol.sh/).
 With NPM
 
 ```shell
-npm i @groundcontrol/groundcontrol
+npm i @groundcontrolsh/groundcontrol
 ```
 
 With yarn
 
 ```shell
-yarn add @groundcontrol/groundcontrol
+yarn add @groundcontrolsh/groundcontrol
 ```
 
 ## Usage
