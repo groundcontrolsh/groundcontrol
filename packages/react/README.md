@@ -20,7 +20,7 @@ yarn add @groundcontrolsh/react
 
 ## Usage
 
-```tsx
+```ts
 import { GroundControlProvider, useFeatureFlag } from "@groundcontrolsh/react";
 
 // In your top-most component tree
