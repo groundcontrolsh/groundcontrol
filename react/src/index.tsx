@@ -28,12 +28,13 @@ export function useFeatureFlag(flagName: string, ...actorIds: string[]) {
 
   const { projectId, apiKey, baseUrl } = ctx;
   const [enabled, setEnabled] = useState(false);
+  const query = actorIds
+    .map((actorId) => `actorIds=${encodeURIComponent(actorId)}`)
+    .join("&");
+
   useEffect(() => {
     setEnabled(false);
 
-    const query = actorIds
-      .map((actorId) => `actorIds=${encodeURIComponent(actorId)}`)
-      .join("&");
     const path = `/projects/${projectId}/flags/${flagName}/check?${query}`;
 
     fetch(`${baseUrl ?? "https://api.groundcontrol.sh"}${path}`, {
@@ -50,7 +51,7 @@ export function useFeatureFlag(flagName: string, ...actorIds: string[]) {
         if (json.enabled) setEnabled(true);
       })
       .catch(console.error);
-  }, [flagName, actorIds, projectId, apiKey]);
+  }, [flagName, query, projectId, apiKey]);
 
   return enabled;
 }
