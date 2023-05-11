@@ -8,7 +8,9 @@ async function main() {
   });
 
   setInterval(async () => {
-    const isEnabled = await client.isFeatureFlagEnabled("csv-export", "actor5");
+    const isEnabled = await client.isFeatureFlagEnabled("csv-export", {
+      actors: ["actor5"],
+    });
     console.log("isEnabled:", isEnabled);
   }, 300);
 }
