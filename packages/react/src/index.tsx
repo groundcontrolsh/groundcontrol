@@ -6,6 +6,8 @@ type GroundControlProviderProps = {
   apiKey: string;
   projectId: string;
   baseUrl?: string;
+  cache?: number;
+  onError?: (error: Error) => void;
 };
 
 const GroundControlContext = createContext<GroundControlProviderProps | null>(
@@ -22,6 +24,10 @@ export const GroundControlProvider: React.FC<
   );
 };
 
+function defaultOnError(error: Error) {
+  console.error(error);
+}
+
 export function useFeatureFlag(
   flagName: string,
   options?: { actors?: string[] }
@@ -33,6 +39,7 @@ export function useFeatureFlag(
   const [enabled, setEnabled] = useState(false);
   const query = (options?.actors ?? [])
     .map((actorId) => `actorIds=${encodeURIComponent(actorId)}`)
+    .concat(ctx.cache ? `cache=${ctx.cache}` : [])
     .join("&");
 
   useEffect(() => {
@@ -41,7 +48,7 @@ export function useFeatureFlag(
     const path = `/projects/${projectId}/flags/${flagName}/check?${query}`;
 
     fetch(`${baseUrl ?? "https://api.groundcontrol.sh"}${path}`, {
-      method: "POST",
+      method: "GET",
       headers: {
         authorization: `Bearer ${apiKey}`,
       },
@@ -53,7 +60,7 @@ export function useFeatureFlag(
       .then((json) => {
         if (json.enabled) setEnabled(true);
       })
-      .catch(console.error);
+      .catch(ctx.onError ?? defaultOnError);
   }, [flagName, query, projectId, apiKey]);
 
   return enabled;

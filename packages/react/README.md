@@ -25,8 +25,13 @@ import { GroundControlProvider, useFeatureFlag } from "@groundcontrolsh/react";
 
 // In your top-most component tree
 function App() {
+  // The cache prop defines for how long results are cached in seconds. Defaults to not caching.
   return (
-    <GroundControlProvider projectId="YOUR_PROJECT_ID" apiKey="YOUR_API_KEY">
+    <GroundControlProvider
+      projectId="YOUR_PROJECT_ID"
+      apiKey="YOUR_API_KEY"
+      cache={60}
+    >
       ...
     </GroundControlProvider>
   );

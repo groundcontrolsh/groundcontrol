@@ -1,6 +1,6 @@
 {
   "name": "@groundcontrolsh/groundcontrol",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "GroundControl TypeScript SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

@@ -3,10 +3,14 @@ export class GroundControlClient {
   #baseURL: string;
   #projectId: string;
   #apiKey: string;
+  #cache?: number;
+  #onError: (err: Error) => void;
 
   constructor(options: {
     fetch?: typeof fetch;
     baseURL?: string;
+    cache?: number;
+    onError?: (err: Error) => void;
     projectId: string;
     apiKey: string;
   }) {
@@ -14,6 +18,8 @@ export class GroundControlClient {
     this.#baseURL = options.baseURL || "https://api.groundcontrol.sh";
     this.#projectId = options.projectId;
     this.#apiKey = options.apiKey;
+    this.#cache = options.cache;
+    this.#onError = options.onError ?? defaultOnError;
   }
 
   async isFeatureFlagEnabled(
@@ -22,12 +28,13 @@ export class GroundControlClient {
   ) {
     const query = (options?.actors || [])
       .map((actorId) => `actorIds=${encodeURIComponent(actorId)}`)
+      .concat(this.#cache ? [`cache=${this.#cache}`] : [])
       .join("&");
     const path = `/projects/${
       this.#projectId
     }/flags/${flagName}/check?${query}`;
     const response = (await this.#request({
-      method: "POST",
+      method: "GET",
       path,
     })) as { enabled: boolean };
 
@@ -43,12 +50,14 @@ export class GroundControlClient {
       },
     });
     if (!response.ok) {
-      throw new Error(await getErrorMessage(response));
+      this.#onError(new Error(await getErrorMessage(response)));
+      return { enabled: false };
     }
     try {
       return (await response.json()) as unknown;
     } catch (err) {
-      throw new Error(`Failed to parse response from ${url}`);
+      this.#onError(new Error(`Failed to parse response from ${url}`));
+      return { enabled: false };
     }
   }
 }
@@ -64,4 +73,8 @@ async function getErrorMessage(resp: Response): Promise<string> {
     return body["message"];
   }
   return resp.statusText;
+}
+
+function defaultOnError(error: Error) {
+  console.error(error);
 }

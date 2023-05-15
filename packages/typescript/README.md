@@ -26,6 +26,8 @@ import { GroundControlClient } from "@groundcontrolsh/groundcontrol";
 const client = new GroundControlClient({
   apiKey: "YOUR_API_KEY",
   projectId: "YOUR_PROJECT_ID",
+  cache: 60, // Optional. For how long results are cached in seconds. Defaults to not caching.
+  // fetch: ... Pass a fetch implementation if there's not a global one defined.
 });
 
 const isEnabled = await client.isFeatureFlagEnabled("flag-name");
