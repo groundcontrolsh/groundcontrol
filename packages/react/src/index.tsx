@@ -58,7 +58,11 @@ export function useFeatureFlag(
         throw new Error(res.statusText);
       })
       .then((json) => {
-        if (json.enabled) setEnabled(true);
+        if (typeof json.enabled === "boolean") {
+          setEnabled(json.enabled);
+        } else {
+          throw new Error("Invalid response");
+        }
       })
       .catch(ctx.onError ?? defaultOnError);
   }, [flagName, query, projectId, apiKey]);
