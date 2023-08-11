@@ -45,7 +45,7 @@ func (c *Client) IsFeatureFlagEnabled(ctx context.Context, flagName string, enti
 		return false, err
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, reqURL, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, reqURL, nil)
 	if err != nil {
 		return false, err
 	}
