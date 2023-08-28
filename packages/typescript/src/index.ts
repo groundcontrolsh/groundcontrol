@@ -1,3 +1,12 @@
+export type GroundControlClientOptions = {
+  fetch?: typeof fetch;
+  baseURL?: string;
+  cache?: number;
+  onError?: (err: Error) => void;
+  projectId: string;
+  apiKey: string;
+};
+
 export class GroundControlClient {
   #fetch: typeof fetch;
   #baseURL: string;
@@ -6,14 +15,7 @@ export class GroundControlClient {
   #cache?: number;
   #onError: (err: Error) => void;
 
-  constructor(options: {
-    fetch?: typeof fetch;
-    baseURL?: string;
-    cache?: number;
-    onError?: (err: Error) => void;
-    projectId: string;
-    apiKey: string;
-  }) {
+  constructor(options: GroundControlClientOptions) {
     this.#fetch = options.fetch ?? global.fetch;
     this.#baseURL = options.baseURL || "https://api.groundcontrol.sh";
     this.#projectId = options.projectId;

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest",
     "prepare": "husky install"
   },
   "repository": {
@@ -21,10 +21,14 @@
   "devDependencies": {
     "husky": "^8.0.3",
     "lint-staged": "^13.2.0",
-    "prettier": "2.8.4"
+    "prettier": "2.8.4",
+    "vitest": "^0.34.3"
   },
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown",
     "*.{js,css,md}": "prettier --write"
-  }
+  },
+  "workspaces": [
+    "packages/typescript"
+  ]
 }
