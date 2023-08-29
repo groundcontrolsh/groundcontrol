@@ -1,0 +1,11 @@
+{
+  "name": "@groundcontrolsh/go",
+  "version": "0.1.0",
+  "description": "GroundControl TypeScript SDK",
+  "scripts": {
+    "test": "cd pkg/groundcontrol && go test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT"
+}

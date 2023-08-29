@@ -29,6 +29,7 @@
   },
   "workspaces": [
     "packages/typescript",
-    "packages/react"
+    "packages/react",
+    "packages/go"
   ]
 }
