@@ -3,8 +3,11 @@ name: Test
 on: [push]
 
 jobs:
-  test:
+  test-node:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [14, 16, 18]
 
     steps:
       - name: Checkout code
@@ -13,26 +16,67 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "18" # TODO: matrix of versions
+          node-version: ${{ matrix.node }}
+
+      - name: Install NPM dependencies
+        run: npm i
+
+      - name: Run TypeScript tests
+        run: npm t -w packages/typescript
+
+      - name: Run React tests
+        run: npm t -w packages/react
+
+  test-ruby:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Due to https://github.com/actions/runner/issues/849, we have to use quotes for '3.0'
+        ruby:
+          [
+            "2.7",
+            "3.0",
+            "3.1",
+            "3.2",
+            head,
+            jruby,
+            jruby-head,
+            truffleruby,
+            truffleruby-head,
+          ]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.2" # TODO: matrix of versions
+          ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-
-      - name: Setup Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: "1.21" # TODO: matrix of verisions
-
-      - name: Install NPM dependencies
-        run: npm i
 
       - name: Install Ruby dependencies
         run: |
           cd packages/ruby
           bundle install
+
+      - name: Run tests
+        run: npm t -w packages/ruby
+
+  test-go:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go: ["1.20.7", "1.21"]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go }}
 
       - name: Install Go dependencies
         run: |
@@ -40,4 +84,4 @@ jobs:
           go get -v ./...
 
       - name: Run tests
-        run: npm test
+        run: npm t -w packages/go
