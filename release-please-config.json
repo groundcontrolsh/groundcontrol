@@ -1,0 +1,16 @@
+{
+  "packages": {
+    "packages/typescript": {
+      "release-type": "node"
+    },
+    "packages/react": {
+      "release-type": "node"
+    },
+    "packages/ruby": {
+      "release-type": "ruby"
+    },
+    "packages/go": {
+      "release-type": "go"
+    }
+  }
+}
