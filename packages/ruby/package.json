@@ -1,0 +1,11 @@
+{
+  "name": "@groundcontrolsh/ruby",
+  "version": "0.1.0",
+  "description": "GroundControl Ruby SDK",
+  "scripts": {
+    "test": "ruby test/*_test.rb"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT"
+}

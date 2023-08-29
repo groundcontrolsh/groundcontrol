@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "vitest",
+    "test": "CI=true npm t --workspaces",
     "prepare": "husky install"
   },
   "repository": {
@@ -30,6 +30,7 @@
   "workspaces": [
     "packages/typescript",
     "packages/react",
-    "packages/go"
+    "packages/go",
+    "packages/ruby"
   ]
 }
