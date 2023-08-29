@@ -1,6 +1,8 @@
+require File.expand_path('../lib/version', __FILE__)
+
 Gem::Specification.new do |s|
   s.name        = "groundcontrolsh"
-  s.version     = "0.1.0"
+  s.version     = GroundControl::VERSION
   s.summary     = "Ruby SDK for groundcontrol.sh"
   s.description = "Verify the rollout status of feature flags created in your groundcontrol.sh project"
   s.authors     = ["Alberto Gimeno"]
