@@ -1,3 +1,4 @@
+// Main file
 export type GroundControlClientOptions = {
   fetch?: typeof fetch;
   baseURL?: string;
