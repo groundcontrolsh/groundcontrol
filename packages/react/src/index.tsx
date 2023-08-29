@@ -8,6 +8,7 @@ type GroundControlProviderProps = {
   baseUrl?: string;
   cache?: number;
   onError?: (error: Error) => void;
+  fetch?: typeof fetch;
 };
 
 const GroundControlContext = createContext<GroundControlProviderProps | null>(
@@ -47,7 +48,9 @@ export function useFeatureFlag(
 
     const path = `/projects/${projectId}/flags/${flagName}/check?${query}`;
 
-    fetch(`${baseUrl ?? "https://api.groundcontrol.sh"}${path}`, {
+    const _fetch = ctx.fetch ?? global.fetch;
+
+    _fetch(`${baseUrl ?? "https://api.groundcontrol.sh"}${path}`, {
       method: "GET",
       headers: {
         authorization: `Bearer ${apiKey}`,
