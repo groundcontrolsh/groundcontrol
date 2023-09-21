@@ -8,6 +8,8 @@ export type GroundControlClientOptions = {
   apiKey: string;
 };
 
+type CheckOptions = { actors?: string[] };
+
 export class GroundControlClient {
   #fetch: typeof fetch;
   #baseURL: string;
@@ -15,6 +17,9 @@ export class GroundControlClient {
   #apiKey: string;
   #cache?: number;
   #onError: (err: Error) => void;
+  #actorOverrides = new Map<string, Map<string, boolean>>();
+  #flagOverrides = new Map<string, boolean>();
+  #fullOverride: boolean | null = null;
 
   constructor(options: GroundControlClientOptions) {
     this.#fetch = options.fetch ?? global.fetch;
@@ -25,10 +30,64 @@ export class GroundControlClient {
     this.#onError = options.onError ?? defaultOnError;
   }
 
+  #setFeatureFlagEnabled(
+    enabled: boolean,
+    flagName: string,
+    options?: CheckOptions
+  ) {
+    if (!options) {
+      this.#flagOverrides.set(flagName, enabled);
+      this.#actorOverrides.delete(flagName);
+    } else {
+      const actors =
+        this.#actorOverrides.get(flagName) || new Map<string, boolean>();
+      for (const actorId of options.actors || []) {
+        actors.set(actorId, enabled);
+      }
+      this.#actorOverrides.set(flagName, actors);
+    }
+  }
+
+  disableFeatureFlag(flagName: string, options?: CheckOptions) {
+    this.#setFeatureFlagEnabled(false, flagName, options);
+  }
+
+  disableAllFeatureFlags() {
+    this.#fullOverride = false;
+  }
+
+  enableFeatureFlag(flagName: string, options?: CheckOptions) {
+    this.#setFeatureFlagEnabled(true, flagName, options);
+  }
+
+  enableAllFeatureFlags() {
+    this.#fullOverride = true;
+  }
+
+  reset() {
+    this.#fullOverride = null;
+    this.#flagOverrides.clear();
+    this.#actorOverrides.clear();
+  }
+
   async isFeatureFlagEnabled(
     flagName: string,
-    options?: { actors?: string[] }
-  ) {
+    options?: CheckOptions
+  ): Promise<boolean> {
+    const actorOverrides = this.#actorOverrides.get(flagName);
+    if (actorOverrides && options?.actors) {
+      for (const actorId of options.actors) {
+        const actorOverride = actorOverrides.get(actorId);
+        if (actorOverride !== undefined) return actorOverride;
+      }
+    }
+    const flagOverride = this.#flagOverrides.get(flagName);
+    if (flagOverride !== undefined) return flagOverride;
+
+    if (this.#fullOverride !== null) {
+      return this.#fullOverride;
+    }
+
     const query = (options?.actors || [])
       .map((actorId) => `actorIds=${encodeURIComponent(actorId)}`)
       .concat(this.#cache ? [`cache=${this.#cache}`] : [])
