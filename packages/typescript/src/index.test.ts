@@ -130,7 +130,7 @@ test("handles a response with an invalid body", async (expected) => {
 
 test.each([[true], [false]])(
   "handles a non JSON response. ok=%s",
-  async (ok) => {
+  async (ok: boolean) => {
     const _fetch = vi.fn(() => {
       return {
         ok,
@@ -169,6 +169,91 @@ test.each([[true], [false]])(
     );
   }
 );
+
+test("supports different overide strategies", async (expected) => {
+  const _fetch = vi.fn(() => {
+    return {
+      ok: true,
+      json: async () => ({ enabled: true }),
+    };
+  });
+
+  const client = new GroundControlClient({
+    apiKey,
+    projectId,
+    fetch: _fetch as unknown as typeof fetch,
+  });
+
+  // disable all flags
+  client.disableAllFeatureFlags();
+  expect(await client.isFeatureFlagEnabled(flagName)).toBe(false);
+  expect(_fetch).not.toHaveBeenCalled();
+  client.reset();
+
+  // enable all flags
+  client.enableAllFeatureFlags();
+  expect(await client.isFeatureFlagEnabled(flagName)).toBe(true);
+  expect(_fetch).not.toHaveBeenCalled();
+  client.reset();
+
+  // disable a flag for all actors
+  client.disableFeatureFlag(flagName);
+  expect(await client.isFeatureFlagEnabled(flagName)).toBe(false);
+  expect(_fetch).not.toHaveBeenCalled();
+  client.reset();
+
+  // enable a flag for all actors
+  client.enableFeatureFlag(flagName);
+  expect(await client.isFeatureFlagEnabled(flagName)).toBe(true);
+  expect(_fetch).not.toHaveBeenCalled();
+  client.reset();
+
+  // disable a flag for a specific actor
+  client.disableFeatureFlag(flagName, { actors: ["user1"] });
+  expect(
+    await client.isFeatureFlagEnabled(flagName, { actors: ["user1"] })
+  ).toBe(false);
+  expect(_fetch).not.toHaveBeenCalled();
+  client.reset();
+
+  // enable a flag for a specific actor
+  client.enableFeatureFlag(flagName, { actors: ["user1"] });
+  expect(
+    await client.isFeatureFlagEnabled(flagName, { actors: ["user1"] })
+  ).toBe(true);
+  expect(_fetch).not.toHaveBeenCalled();
+  client.reset();
+
+  // overrides at the flag level take precedence over full overrides
+  client.disableAllFeatureFlags();
+  client.enableFeatureFlag(flagName);
+  expect(await client.isFeatureFlagEnabled(flagName)).toBe(true);
+  expect(_fetch).not.toHaveBeenCalled();
+  client.reset();
+
+  // overrides at the actor level take precedence over other overrides
+  client.disableAllFeatureFlags();
+  client.disableFeatureFlag(flagName);
+  client.enableFeatureFlag(flagName, { actors: ["user1"] });
+  expect(
+    await client.isFeatureFlagEnabled(flagName, { actors: ["user1"] })
+  ).toBe(true);
+  expect(_fetch).not.toHaveBeenCalled();
+  client.reset();
+
+  // actor overrides work for the same and different actors
+  client.enableFeatureFlag(flagName, { actors: ["user1"] });
+  client.disableFeatureFlag(flagName, { actors: ["user1"] });
+  client.enableFeatureFlag(flagName, { actors: ["user2"] });
+  expect(
+    await client.isFeatureFlagEnabled(flagName, { actors: ["user1"] })
+  ).toBe(false);
+  expect(
+    await client.isFeatureFlagEnabled(flagName, { actors: ["user2"] })
+  ).toBe(true);
+  expect(_fetch).not.toHaveBeenCalled();
+  client.reset();
+});
 
 function createMocks(
   options?: Partial<GroundControlClientOptions>,
