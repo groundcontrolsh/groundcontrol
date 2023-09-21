@@ -19,7 +19,9 @@ jobs:
           command: manifest
 
       - name: Release output
-        run: echo ${{ toJSON(steps.release.outputs) }}
+        env:
+          OUTPUT: ${{ toJSON(steps.release.outputs) }}
+        run: echo $OUTPUT
 
       # Release TypeScript package
       - uses: actions/checkout@v2
