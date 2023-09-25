@@ -8,7 +8,7 @@ export type GroundControlClientOptions = {
   apiKey: string;
 };
 
-type CheckOptions = { actors?: string[] };
+export type FeatureFlagCheckOptions = { actors?: string[] };
 
 export class GroundControlClient {
   #fetch: typeof fetch;
@@ -33,7 +33,7 @@ export class GroundControlClient {
   #setFeatureFlagEnabled(
     enabled: boolean,
     flagName: string,
-    options?: CheckOptions
+    options?: FeatureFlagCheckOptions
   ) {
     if (!options) {
       this.#flagOverrides.set(flagName, enabled);
@@ -48,7 +48,7 @@ export class GroundControlClient {
     }
   }
 
-  disableFeatureFlag(flagName: string, options?: CheckOptions) {
+  disableFeatureFlag(flagName: string, options?: FeatureFlagCheckOptions) {
     this.#setFeatureFlagEnabled(false, flagName, options);
   }
 
@@ -56,7 +56,7 @@ export class GroundControlClient {
     this.#fullOverride = false;
   }
 
-  enableFeatureFlag(flagName: string, options?: CheckOptions) {
+  enableFeatureFlag(flagName: string, options?: FeatureFlagCheckOptions) {
     this.#setFeatureFlagEnabled(true, flagName, options);
   }
 
@@ -72,7 +72,7 @@ export class GroundControlClient {
 
   async isFeatureFlagEnabled(
     flagName: string,
-    options?: CheckOptions
+    options?: FeatureFlagCheckOptions
   ): Promise<boolean> {
     const actorOverrides = this.#actorOverrides.get(flagName);
     if (actorOverrides && options?.actors) {
