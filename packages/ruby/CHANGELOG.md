@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/groundcontrolsh/groundcontrol/compare/v0.1.1...v0.1.2) (2023-09-25)
+
+
+### Bug Fixes
+
+* implement overrides for Ruby ([7c863bd](https://github.com/groundcontrolsh/groundcontrol/commit/7c863bdf1167d293bba9dc18d638c54f5b349d4f))
+
 ## [0.1.1](https://github.com/groundcontrolsh/groundcontrol/compare/v0.1.0...v0.1.1) (2023-09-25)
 
 
