@@ -54,3 +54,19 @@ jobs:
           cd packages/react
           npm ci --ignore-scripts
           npm publish
+
+      # Release Ruby gem
+      - uses: actions/checkout@v2
+        if: ${{ steps.release.outputs['packages/ruby--release_created'] }}
+      - uses: ruby/setup-ruby@v1
+        if: ${{ steps.release.outputs['packages/ruby--release_created'] }}
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+      - if: ${{ steps.release.outputs['packages/ruby--release_created'] }}
+        env:
+          GEM_HOST_API_KEY: ${{ secrets.GEM_HOST_API_KEY }}
+        run: |
+          cd packages/ruby
+          gem build *.gemspec
+          gem push *.gem
