@@ -162,4 +162,120 @@ func TestIsFeatureFlagEnabled(t *testing.T) {
 			t.Fatal("expected flag to be enabled for actors")
 		}
 	})
+
+	t.Run("overrides", func(t *testing.T) {
+		client := groundcontrol.New(testProjectID, testAPIKey)
+		flagName := "example"
+		user1 := groundcontrol.Actor("user1")
+		user2 := groundcontrol.Actor("user2")
+
+		client.DisableAllFeatureFlags()
+		isEnabled, err := client.IsFeatureFlagEnabled(context.Background(), flagName)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if isEnabled {
+			t.Fatal("expected flag to be disabled")
+		}
+		client.Reset()
+
+		client.EnableAllFeatureFlags()
+		isEnabled, err = client.IsFeatureFlagEnabled(context.Background(), flagName)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !isEnabled {
+			t.Fatal("expected flag to be enabled")
+		}
+		client.Reset()
+
+		// disable a flag for all actors
+		client.DisableFeatureFlag(flagName)
+		isEnabled, err = client.IsFeatureFlagEnabled(context.Background(), flagName)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if isEnabled {
+			t.Fatal("expected flag to be disabled")
+		}
+		client.Reset()
+
+		// enable a flag for all actors
+		client.EnableFeatureFlag(flagName)
+		isEnabled, err = client.IsFeatureFlagEnabled(context.Background(), flagName)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !isEnabled {
+			t.Fatal("expected flag to be enabled")
+		}
+		client.Reset()
+
+		// disable a flag for a specific actor
+		client.DisableFeatureFlag(flagName, user1)
+		isEnabled, err = client.IsFeatureFlagEnabled(context.Background(), flagName, user1)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if isEnabled {
+			t.Fatal("expected flag to be disabled")
+		}
+		client.Reset()
+
+		// enable a flag for a specific actor
+		client.EnableFeatureFlag(flagName, user1)
+		isEnabled, err = client.IsFeatureFlagEnabled(context.Background(), flagName, user1)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !isEnabled {
+			t.Fatal("expected flag to be enabled")
+		}
+		client.Reset()
+
+		// overrides at the flag level take precedence over full overrides
+		client.DisableAllFeatureFlags()
+		client.EnableFeatureFlag(flagName)
+		isEnabled, err = client.IsFeatureFlagEnabled(context.Background(), flagName)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !isEnabled {
+			t.Fatal("expected flag to be enabled")
+		}
+		client.Reset()
+
+		// overrides at the actor level take precedence over other overrides
+		client.DisableAllFeatureFlags()
+		client.DisableFeatureFlag(flagName)
+		client.EnableFeatureFlag(flagName, user1)
+		isEnabled, err = client.IsFeatureFlagEnabled(context.Background(), flagName, user1)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !isEnabled {
+			t.Fatal("expected flag to be enabled")
+		}
+		client.Reset()
+
+		// actor overrides work for the same and different actors
+		client.EnableFeatureFlag(flagName, user1)
+		client.DisableFeatureFlag(flagName, user1)
+		client.EnableFeatureFlag(flagName, user2)
+		isEnabled, err = client.IsFeatureFlagEnabled(context.Background(), flagName, user1)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if isEnabled {
+			t.Fatal("expected flag to be disabled")
+		}
+		isEnabled, err = client.IsFeatureFlagEnabled(context.Background(), flagName, user2)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !isEnabled {
+			t.Fatal("expected flag to be enabled")
+		}
+		client.Reset()
+	})
 }

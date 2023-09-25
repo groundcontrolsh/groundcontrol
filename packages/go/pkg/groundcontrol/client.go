@@ -18,6 +18,11 @@ type Client struct {
 	projectID  string
 	apiKey     string
 	httpClient *http.Client
+
+	// overrides
+	actorOverrides map[string]map[string]bool
+  flagOverrides map[string]bool
+  fullOverride *bool
 }
 
 // New returns a new GroundControl client for a given project ID and API key.
@@ -27,6 +32,8 @@ func New(projectID, apiKey string, opts ...Option) *Client {
 		projectID:  projectID,
 		apiKey:     apiKey,
 		httpClient: http.DefaultClient,
+		flagOverrides: make(map[string]bool),
+		actorOverrides: make(map[string]map[string]bool),
 	}
 
 	for _, opt := range opts {
@@ -40,6 +47,25 @@ func New(projectID, apiKey string, opts ...Option) *Client {
 // If no entities are provided, the feature flag is checked globally.
 // If multiple entities are provided, it will return true if at least one is enabled.
 func (c *Client) IsFeatureFlagEnabled(ctx context.Context, flagName string, entities ...Entity) (bool, error) {
+	if len(entities) > 0 {
+		actorOverride, ok := c.actorOverrides[flagName]
+		if ok {
+			for _, actor := range entities {
+				value, ok := actorOverride[actor.Identifier()]
+				if ok {
+					return value, nil
+				}
+			}
+		}
+	}
+	flagOverride, ok := c.flagOverrides[flagName]
+	if ok {
+		return flagOverride, nil
+	}
+	if c.fullOverride != nil {
+		return *c.fullOverride, nil
+	}
+
 	reqURL, err := url.JoinPath(c.baseURL, "projects", c.projectID, "flags", flagName, "check")
 	if err != nil {
 		return false, err
@@ -85,4 +111,44 @@ func (c *Client) IsFeatureFlagEnabled(ctx context.Context, flagName string, enti
 	}
 
 	return response.Enabled, nil
+}
+
+func (c *Client) DisableFeatureFlag(flagName string, entities ...Entity) {
+	c.setFeatureFlagEnabled(false, flagName, entities...)
+}
+
+func (c *Client) DisableAllFeatureFlags() {
+	value := false
+	c.fullOverride = &value
+}
+
+func (c *Client) EnableFeatureFlag(flagName string, entities ...Entity) {
+	c.setFeatureFlagEnabled(true, flagName, entities...)
+}
+
+func (c *Client) EnableAllFeatureFlags() {
+	value := true
+	c.fullOverride = &value
+}
+
+func (c *Client) Reset() {
+	c.fullOverride = nil
+	c.flagOverrides = make(map[string]bool)
+	c.actorOverrides = make(map[string]map[string]bool)
+}
+
+func (c *Client) setFeatureFlagEnabled(enabled bool, flagName string, entities ...Entity) {
+	if len(entities) == 0 {
+		c.flagOverrides[flagName] = enabled
+	} else {
+		actors := c.actorOverrides[flagName]
+		if actors == nil {
+			actors = make(map[string]bool)
+		}
+
+		for _, entity := range entities {
+			actors[entity.Identifier()] = enabled
+		}
+		c.actorOverrides[flagName] = actors
+	}
 }
