@@ -1,6 +1,6 @@
 {
   "packages/typescript": "0.4.2",
   "packages/react": "0.3.0",
-  "packages/ruby": "0.1.1",
+  "packages/ruby": "0.1.2",
   "packages/go": "0.1.0"
 }
