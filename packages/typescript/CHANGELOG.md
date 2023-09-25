@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/groundcontrolsh/groundcontrol/compare/groundcontrol-v0.4.0...groundcontrol-v0.4.1) (2023-09-25)
+
+
+### Bug Fixes
+
+* fix npm script ([2f2dcae](https://github.com/groundcontrolsh/groundcontrol/commit/2f2dcae1811d980755930d8cb86cb02446f310f7))
+
 ## [0.4.0](https://github.com/groundcontrolsh/groundcontrol/compare/groundcontrol-v0.3.0...groundcontrol-v0.4.0) (2023-09-21)
 
 
