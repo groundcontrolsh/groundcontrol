@@ -52,5 +52,5 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           cd packages/react
-          npm ci
+          npm ci --ignore-scripts
           npm publish

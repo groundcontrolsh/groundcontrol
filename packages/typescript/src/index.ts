@@ -70,6 +70,10 @@ export class GroundControlClient {
     this.#actorOverrides.clear();
   }
 
+  getCacheTtl() {
+    return this.#cache ?? 0;
+  }
+
   async isFeatureFlagEnabled(
     flagName: string,
     options?: FeatureFlagCheckOptions
