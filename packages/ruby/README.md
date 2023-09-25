@@ -17,7 +17,8 @@ require "groundcontrolsh"
 
 client = GroundControl.new(
   project_id: "YOUR_PROJECT_ID",
-  api_key: "YOUR_API_KEY"
+  api_key: "YOUR_API_KEY",
+  cache: 60 # Optional cache ttl in seconds
 )
 
 enabled = client.feature_flag_enabled?("csv-export") # You can pass a symbol or a string

@@ -9,16 +9,24 @@ class GroundControl
     @project_id = project_id
     @api_key = api_key
     @base_url = options[:base_url] || 'https://api.groundcontrol.sh'
-    # @cache = options[:cache] || nil
+    @ttl = options[:cache] || nil
+    @cache = {}
   end
 
   def feature_flag_enabled?(feature_name, options = {})
     actors = options[:actors] || []
 
     query = actors.map { |actor| "actorIds=#{CGI.escape(actor)}" }
-    # query << "cache=#{@cache}" if @cache
 
     url = URI("#{@base_url}/projects/#{@project_id}/flags/#{feature_name}/check?#{query.join('&')}")
+    cached = @cache[url]
+    if cached
+      if cached[:expires] < Time.now.to_i
+        @cache.delete(url)
+      end
+      return cached[:enabled]
+    end
+
     http = Net::HTTP.new(url.host, url.port)
     http.use_ssl = true
 
@@ -29,7 +37,12 @@ class GroundControl
     return nil if response.code != '200'
 
     body = JSON.parse(response.body)
+    enabled = body["enabled"]
 
-    return body["enabled"]
+    if @ttl
+      @cache[url] = { expires: Time.now.to_i + @ttl, enabled: enabled }
+    end
+
+    return enabled
   end
 end
