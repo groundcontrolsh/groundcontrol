@@ -1,13 +1,13 @@
 {
   "name": "@groundcontrolsh/react",
   "version": "0.2.4",
-  "description": "GroundControl TypeScript SDK",
+  "description": "GroundControl TypeScript SDK for React",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
   "scripts": {
     "build": "rollup -c",
-    "prepublish": "npm run build",
+    "prepublishOnly": "npm run build",
     "test": "vitest"
   },
   "keywords": [],
@@ -28,6 +28,7 @@
     "vitest": "^0.34.3"
   },
   "peerDependencies": {
+    "@groundcontrolsh/groundcontrol": "^0.4.2",
     "react": "^18.2.0"
   }
 }

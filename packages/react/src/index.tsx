@@ -1,74 +1,71 @@
 import React from "react";
 import { PropsWithChildren } from "react";
 import { useEffect, useState, createContext, useContext } from "react";
+import {
+  FeatureFlagCheckOptions,
+  GroundControlClient,
+} from "@groundcontrolsh/groundcontrol";
 
-type GroundControlProviderProps = {
-  apiKey: string;
-  projectId: string;
-  baseUrl?: string;
-  cache?: number;
-  onError?: (error: Error) => void;
-  fetch?: typeof fetch;
-};
+// We store results in a cache because to avoid hooks to flap between enabled/disabled even if the server always returns enabled=true.
+// The flapping happens because React components render synchronously, and even if we use cache headers and responses are cached, fetch() is always async.
+// So by default, always, we want to use the latest value we got from the server.
+const caches = new WeakMap<GroundControlClient, Cache>();
 
-const GroundControlContext = createContext<GroundControlProviderProps | null>(
-  null
-);
+class Cache {
+  data: Record<string, boolean> = {};
+
+  setCached(
+    flagName: string,
+    options: FeatureFlagCheckOptions | undefined,
+    enabled: boolean
+  ) {
+    const key = this.#createKey(flagName, options);
+    this.data[key] = enabled;
+  }
+
+  getCached(flagName: string, options: FeatureFlagCheckOptions | undefined) {
+    const key = this.#createKey(flagName, options);
+    const value = this.data[key];
+    if (!value) return null;
+    return value;
+  }
+
+  #createKey(flagName: string, options: FeatureFlagCheckOptions | undefined) {
+    return JSON.stringify({ flagName, options });
+  }
+}
+
+const GroundControlContext = createContext<GroundControlClient | null>(null);
 
 export const GroundControlProvider: React.FC<
-  PropsWithChildren<GroundControlProviderProps>
-> = ({ children, ...props }) => {
+  PropsWithChildren<{ client: GroundControlClient }>
+> = ({ children, client }) => {
   return (
-    <GroundControlContext.Provider value={props}>
+    <GroundControlContext.Provider value={client}>
       {children}
     </GroundControlContext.Provider>
   );
 };
 
-function defaultOnError(error: Error) {
-  console.error(error);
-}
-
 export function useFeatureFlag(
   flagName: string,
-  options?: { actors?: string[] }
+  options?: FeatureFlagCheckOptions
 ) {
-  const ctx = useContext(GroundControlContext);
-  if (!ctx) throw new Error("Missing GroundControlProvider");
+  const client = useContext(GroundControlContext);
+  if (!client) throw new Error("Missing GroundControlProvider");
 
-  const { projectId, apiKey, baseUrl } = ctx;
-  const [enabled, setEnabled] = useState(false);
-  const query = (options?.actors ?? [])
-    .map((actorId) => `actorIds=${encodeURIComponent(actorId)}`)
-    .concat(ctx.cache ? `cache=${ctx.cache}` : [])
-    .join("&");
+  const key = (options?.actors || []).join("\n");
+  const cache = caches.get(client) ?? new Cache();
+  caches.set(client, cache);
+  const cached = cache.getCached(flagName, options);
+  const [enabled, setEnabled] = useState(cached ?? false);
 
   useEffect(() => {
-    setEnabled(false);
+    client.isFeatureFlagEnabled(flagName, options).then((enabled) => {
+      cache.setCached(flagName, options, enabled);
+      setEnabled(enabled);
+    });
+  }, [flagName, key]);
 
-    const path = `/projects/${projectId}/flags/${flagName}/check?${query}`;
-
-    const _fetch = ctx.fetch ?? global.fetch;
-
-    _fetch(`${baseUrl ?? "https://api.groundcontrol.sh"}${path}`, {
-      method: "GET",
-      headers: {
-        authorization: `Bearer ${apiKey}`,
-      },
-    })
-      .then((res) => {
-        if (res.ok) return res.json();
-        throw new Error(res.statusText);
-      })
-      .then((json) => {
-        if (typeof json.enabled === "boolean") {
-          setEnabled(json.enabled);
-        } else {
-          throw new Error("Invalid response");
-        }
-      })
-      .catch(ctx.onError ?? defaultOnError);
-  }, [flagName, query, projectId, apiKey]);
-
-  return enabled;
+  return cached !== null ? cached : enabled;
 }

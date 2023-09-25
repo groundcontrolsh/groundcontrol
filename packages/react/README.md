@@ -2,39 +2,38 @@
 
 # GroundControl
 
-TypeScript SDK for [GroundControl](https://groundcontrol.sh/).
+React SDK for [GroundControl](https://groundcontrol.sh/).
 
 ## Installing
 
 With NPM
 
 ```shell
-npm i @groundcontrolsh/react
+npm i @groundcontrolsh/groundcontrol @groundcontrolsh/react
 ```
 
 With yarn
 
 ```shell
-yarn add @groundcontrolsh/react
+yarn add @groundcontrolsh/groundcontrol @groundcontrolsh/react
 ```
 
 ## Usage
 
-```ts
+```tsx
+import { GroundControlClient } from "@groundcontrolsh/groundcontrol";
 import { GroundControlProvider, useFeatureFlag } from "@groundcontrolsh/react";
 
 // In your top-most component tree
+const client = new GroundControlClient({
+  projectId: "YOUR_PROJECT_ID",
+  apiKey: "YOUR_API_KEY",
+  cache: 60, // Optional. For how long results are cached in seconds. Defaults to not caching.
+});
+
 function App() {
   // The cache prop defines for how long results are cached in seconds. Defaults to not caching.
-  return (
-    <GroundControlProvider
-      projectId="YOUR_PROJECT_ID"
-      apiKey="YOUR_API_KEY"
-      cache={60}
-    >
-      ...
-    </GroundControlProvider>
-  );
+  return <GroundControlProvider client={client}>...</GroundControlProvider>;
 }
 
 // In your components
