@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2](https://github.com/groundcontrolsh/groundcontrol/compare/groundcontrol-v0.4.1...groundcontrol-v0.4.2) (2023-09-25)
+
+
+### Bug Fixes
+
+* provide method to retrieve the cache ttl ([8f49a72](https://github.com/groundcontrolsh/groundcontrol/commit/8f49a72f0ec8789de276494d47bdef686ec68f51))
+
 ## [0.4.1](https://github.com/groundcontrolsh/groundcontrol/compare/groundcontrol-v0.4.0...groundcontrol-v0.4.1) (2023-09-25)
 
 
