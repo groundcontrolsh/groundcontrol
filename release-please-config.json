@@ -1,16 +1,20 @@
 {
   "packages": {
     "packages/typescript": {
-      "release-type": "node"
+      "release-type": "node",
+      "package-name": "groundcontrol-typescript"
     },
     "packages/react": {
-      "release-type": "node"
+      "release-type": "node",
+      "package-name": "groundcontrol-react"
     },
     "packages/ruby": {
-      "release-type": "ruby"
+      "release-type": "ruby",
+      "package-name": "groundcontrol-ruby"
     },
     "packages/go": {
-      "release-type": "go"
+      "release-type": "go",
+      "package-name": "groundcontrol-go"
     }
   }
 }
