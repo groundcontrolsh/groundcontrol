@@ -12,7 +12,7 @@ class TestGroundControl < Test::Unit::TestCase
     @flag_name = "flag-name-#{Time.now.to_i}"
   end
 
-  def test_simple
+  def test_simple_enabled
     stub_request(:get, "https://api.groundcontrol.sh/projects/#{@project_id}/flags/#{@flag_name}/check").
     with(
       headers: {
@@ -29,7 +29,24 @@ class TestGroundControl < Test::Unit::TestCase
     assert_equal(true, enabled)
   end
 
-  def test_with_ttl
+  def test_simple_disabled
+    stub_request(:get, "https://api.groundcontrol.sh/projects/#{@project_id}/flags/#{@flag_name}/check").
+    with(
+      headers: {
+          'Authorization'=>"Bearer #{@api_key}",
+      }).
+    to_return(status: 200, body: { enabled: false }.to_json, headers: {})
+
+    client = GroundControl.new(
+      project_id: @project_id,
+      api_key: @api_key,
+    )
+
+    enabled = client.feature_flag_enabled?(@flag_name)
+    assert_equal(false, enabled)
+  end
+
+  def test_with_ttl_cache_fail
     stub_request(:get, "https://api.groundcontrol.sh/projects/#{@project_id}/flags/#{@flag_name}/check").
     with(
       headers: {
@@ -59,7 +76,7 @@ class TestGroundControl < Test::Unit::TestCase
     assert_equal(false, enabled)
   end
 
-  def test_with_ttl_cache_fail
+  def test_with_ttl
     stub_request(:get, "https://api.groundcontrol.sh/projects/#{@project_id}/flags/#{@flag_name}/check").
     with(
       headers: {
