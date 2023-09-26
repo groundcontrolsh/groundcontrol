@@ -28,7 +28,8 @@
   },
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown",
-    "*.{js,css,md}": "prettier --write"
+    "*.{js,css,md}": "prettier --write",
+    "*.go": "gofmt -w"
   },
   "workspaces": [
     "packages/typescript",

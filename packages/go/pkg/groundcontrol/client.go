@@ -21,18 +21,18 @@ type Client struct {
 
 	// overrides
 	actorOverrides map[string]map[string]bool
-  flagOverrides map[string]bool
-  fullOverride *bool
+	flagOverrides  map[string]bool
+	fullOverride   *bool
 }
 
 // New returns a new GroundControl client for a given project ID and API key.
 func New(projectID, apiKey string, opts ...Option) *Client {
 	c := &Client{
-		baseURL:    DefaultBaseURL,
-		projectID:  projectID,
-		apiKey:     apiKey,
-		httpClient: http.DefaultClient,
-		flagOverrides: make(map[string]bool),
+		baseURL:        DefaultBaseURL,
+		projectID:      projectID,
+		apiKey:         apiKey,
+		httpClient:     http.DefaultClient,
+		flagOverrides:  make(map[string]bool),
 		actorOverrides: make(map[string]map[string]bool),
 	}
 
