@@ -25,7 +25,9 @@ jobs:
         run: npm t -w packages/typescript
 
       - name: Run React tests
-        run: npm t -w packages/react
+        run: |
+          npm run build -w packages/typescript
+          npm t -w packages/react
 
   test-ruby:
     runs-on: ubuntu-latest
