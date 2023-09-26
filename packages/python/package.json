@@ -1,0 +1,11 @@
+{
+  "name": "@groundcontrolsh/ruby",
+  "version": "0.1.0",
+  "description": "GroundControl Python SDK",
+  "scripts": {
+    "test": "python -m unittest tests/test_groundcontrol.py"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT"
+}
