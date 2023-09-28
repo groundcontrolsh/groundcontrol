@@ -104,7 +104,7 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          cd packages/
+          cd packages/typescript
           pip install .
 
       - name: Run tests
