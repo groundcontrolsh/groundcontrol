@@ -15,7 +15,7 @@ class GroundControl:
         self.flag_overrides = {}
         self.full_override = None
 
-    def feature_flag_enabled(self, flag_name, options=None):
+    def is_feature_flag_enabled(self, flag_name, options=None):
         options = options or {}
         actors = options.get('actors', [])
 
