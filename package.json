@@ -36,6 +36,7 @@
     "packages/typescript",
     "packages/react",
     "packages/go",
-    "packages/ruby"
+    "packages/ruby",
+    "packages/python"
   ]
 }
