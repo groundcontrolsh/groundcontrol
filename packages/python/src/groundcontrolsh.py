@@ -1,9 +1,9 @@
 import requests
-import json
 import time
 from urllib.parse import quote
 
 class GroundControl:
+
     def __init__(self, project_id, api_key, **options):
         self.project_id = project_id
         self.api_key = api_key
@@ -53,7 +53,10 @@ class GroundControl:
         enabled = body["enabled"]
 
         if self.ttl:
-            self.cache[url] = {"expires": int(time.time()) + self.ttl, "enabled": enabled}
+            self.cache[url] = {
+                "expires": int(time.time()) + self.ttl,
+                "enabled": enabled
+            }
 
         return enabled
 

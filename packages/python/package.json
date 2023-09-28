@@ -1,9 +1,11 @@
 {
-  "name": "@groundcontrolsh/ruby",
+  "name": "@groundcontrolsh/python",
   "version": "0.1.0",
   "description": "GroundControl Python SDK",
   "scripts": {
-    "test": "python -m unittest tests/test_groundcontrol.py"
+    "test": "python -m unittest tests/*.py",
+    "build": "python -m build",
+    "publish": "twine upload dist/*"
   },
   "keywords": [],
   "author": "",

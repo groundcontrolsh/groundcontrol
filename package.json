@@ -29,7 +29,8 @@
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown",
     "*.{js,css,md}": "prettier --write",
-    "*.go": "gofmt -w"
+    "*.go": "gofmt -w",
+    ".py": "yapf --in-place"
   },
   "workspaces": [
     "packages/typescript",
