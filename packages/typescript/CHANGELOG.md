@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.3](https://github.com/groundcontrolsh/groundcontrol/compare/groundcontrol-typescript-v0.4.2...groundcontrol-typescript-v0.4.3) (2023-10-03)
+
+
+### Bug Fixes
+
+* improve global fetch usage ([b4a64b9](https://github.com/groundcontrolsh/groundcontrol/commit/b4a64b93c5eb5974145c58e1f25692b40146617c))
+
 ## [0.4.2](https://github.com/groundcontrolsh/groundcontrol/compare/groundcontrol-v0.4.1...groundcontrol-v0.4.2) (2023-09-25)
 
 
