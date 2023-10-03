@@ -11,7 +11,7 @@ export type GroundControlClientOptions = {
 export type FeatureFlagCheckOptions = { actors?: string[] };
 
 export class GroundControlClient {
-  #fetch: typeof fetch;
+  #fetch?: typeof fetch;
   #baseURL: string;
   #projectId: string;
   #apiKey: string;
@@ -22,7 +22,7 @@ export class GroundControlClient {
   #fullOverride: boolean | null = null;
 
   constructor(options: GroundControlClientOptions) {
-    this.#fetch = options.fetch ?? global.fetch;
+    this.#fetch = options.fetch;
     this.#baseURL = options.baseURL || "https://api.groundcontrol.sh";
     this.#projectId = options.projectId;
     this.#apiKey = options.apiKey;
@@ -109,7 +109,8 @@ export class GroundControlClient {
 
   async #request(options: { method: string; path: string }) {
     const url = `${this.#baseURL}${options.path}`;
-    const response = await this.#fetch(url, {
+    const _fetch = this.#fetch || fetch;
+    const response = await _fetch(url, {
       method: options.method,
       headers: {
         authorization: `Bearer ${this.#apiKey}`,
