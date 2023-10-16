@@ -22,6 +22,21 @@ dev = [
     "toml ~=0.10.2",
     "yapf ~=0.32.0",
 ]
+test = [
+    "pytest~=7.4.2",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+groundcontrolsh = ["py.typed"]
+
+[tool.pytest.ini_options]
+pythonpath = "src"
+addopts = [
+    "--import-mode=importlib",
+]
 
 [build-system]
 build-backend = "setuptools.build_meta"
