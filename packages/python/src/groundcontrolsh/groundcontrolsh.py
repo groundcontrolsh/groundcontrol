@@ -9,14 +9,14 @@ class GroundControl:
         self.project_id: str = project_id
         self.api_key: str = api_key
         self.base_url: str = options.get('base_url', 'https://api.groundcontrol.sh')
-        self.ttl: int | None = options.get('cache')
+        self.ttl: t.Optional[int] = options.get('cache')
         self.cache: t.Dict[str, t.Dict[str, t.Any]] = {}
 
         self.actor_overrides: t.Dict[str, t.Dict[str, bool]] = {}
         self.flag_overrides: t.Dict[str, bool] = {}
-        self.full_override: bool | None = None
+        self.full_override: t.Optional[bool] = None
 
-    def is_feature_flag_enabled(self, flag_name: str, options: t.Dict[str, t.Any] | None = None) -> bool:
+    def is_feature_flag_enabled(self, flag_name: str, options: t.Optional[t.Dict[str, t.Any]] = None) -> bool:
         options = options or {}
         actors = options.get('actors', [])
 
@@ -61,13 +61,13 @@ class GroundControl:
 
         return enabled
 
-    def disable_feature_flag(self, flag_name: str, options: t.Dict[str, t.Any] | None = None) -> None:
+    def disable_feature_flag(self, flag_name: str, options: t.Optional[t.Dict[str, t.Any]] = None) -> None:
         self.set_feature_flag_enabled(False, flag_name, options)
 
     def disable_all_feature_flags(self) -> None:
         self.full_override = False
 
-    def enable_feature_flag(self, flag_name: str, options: t.Dict[str, t.Any] | None = None) -> None:
+    def enable_feature_flag(self, flag_name: str, options: t.Optional[t.Dict[str, t.Any]] = None) -> None:
         self.set_feature_flag_enabled(True, flag_name, options)
 
     def enable_all_feature_flags(self) -> None:
@@ -78,7 +78,7 @@ class GroundControl:
         self.flag_overrides.clear()
         self.full_override = None
 
-    def set_feature_flag_enabled(self, enabled, flag_name: str, options: t.Dict[str, t.Any] | None = None) -> None:
+    def set_feature_flag_enabled(self, enabled, flag_name: str, options: t.Optional[t.Dict[str, t.Any]] = None) -> None:
         options = options or {}
         actors_ops = options.get('actors')
 
