@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 import time
-from src.groundcontrolsh import GroundControl
+from groundcontrolsh import GroundControl
 
 
 class TestGroundControl(unittest.TestCase):
