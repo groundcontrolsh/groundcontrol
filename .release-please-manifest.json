@@ -3,5 +3,5 @@
   "packages/react": "0.3.0",
   "packages/ruby": "0.1.2",
   "packages/go": "0.1.2",
-  "packages/python": "0.2.0"
+  "packages/python": "0.3.0"
 }
