@@ -23,6 +23,12 @@ dev = [
     "yapf ~=0.32.0",
 ]
 
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+groundcontrolsh = ["py.typed"]
+
 [build-system]
 build-backend = "setuptools.build_meta"
 requires = [
